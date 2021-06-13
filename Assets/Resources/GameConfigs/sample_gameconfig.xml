@@ -1,0 +1,91 @@
+<GameConfig>
+<Stats>
+<Stat name="brawn">
+<Colour r="0.5294" g="0.1034" b="0.0156"/>
+</Stat>
+<Stat name="willpower">
+<Colour r="0.1864" g="0.5283" b="0.0174"/>
+</Stat>
+<Stat name="shifty">
+<Colour r="0.382" g="0.4797" b="1"/>
+</Stat>
+<Stat name="witching">
+<Colour r="0.0156" g="0.4048" b="0.5294"/>
+</Stat>
+</Stats>
+<Scenes>
+<Scene>
+
+</Scene>
+</Scenes>
+<Encounters>
+<Encounter name="encounter_01">
+<Stages>
+<Stage>
+<Description>
+Glabbor notices you examining the cake and rushes over with a sneer on their face, "that cake is for guests only."
+</Description>
+<AvailableMoves>
+<AvailableMove name="punch the cake" stat_name="brawn" base_time="20">
+<Components>
+<Component base_damage="2">
+You pull back your first and then bury it directly into the cake, sending bits of it flying everywhere. 
+</Component>
+<Component base_damage="1">
+Nearby patrons are covered from head to toe. 
+</Component>
+<Component base_damage="1" reputation="-5">
+Some seem more pleased by this than others.
+</Component>
+</Components>
+</AvailableMove>
+<AvailableMove name="insult the cake" stat_name="willpower" base_time="35">
+<Components>
+<Component self_damage="2">
+You flash a mean smile back at Glabbor who seems taken off their guard.
+</Component>
+<Component armour="1">
+"That's alright, I have an aversion to poorly made cakes. It's too bad that you couldn't afford a better one."
+</Component>
+<Component base_damage="7">
+Glabbor is stunned by this remark and is at a loss for words. They are not used to you being willing to stick up for yourself.
+</Component>
+</Components>
+</AvailableMove>
+<AvailableMove name="steal glabbor's wallet" stat_name="shifty" base_time="5">
+<Components>
+<Component self_damage="2">
+You snicker at Glabbor's remark, "haha that's a good one! Very funny stuff."
+</Component>
+<Component armour="1">
+Glabbor raises an eyebrow and then turns away, seemingly bored with your reaction.
+</Component>
+<Component gold="25" base_damage="5">
+They become too engrossed in their conversation to notice when you grab their coinpurse from out of their pocket.
+</Component>
+</Components>
+</AvailableMove>
+<AvailableMove name="turn invisible" stat_name="witching" base_time="25">
+<Components>
+<Component mana="-2">
+You begin to mutter some words of power. "Yiglasario.. Windeckly.." 
+</Component>
+<Component reputation="-1">
+People seem really unnerved by this.
+</Component>
+<Component dodge="3">
+There is a gasp when suddenly you begin to turn transluscent before completely disappearing!
+</Component>
+</Components>
+</AvailableMove>
+
+</AvailableMoves>
+</Stage>
+</Stages>
+</Encounter>
+</Encounters>
+<Dialogs>
+<Dialog>
+</Dialog>
+</Dialogs>
+</GameConfig>
