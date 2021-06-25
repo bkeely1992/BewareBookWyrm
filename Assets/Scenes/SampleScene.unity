@@ -2044,7 +2044,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0585e7ccf0679cb428338cc8f73e660d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wordOutputText: {fileID: 51398815}
+  playerEntryText: {fileID: 51398815}
   backspaceUpdateThreshold: 0.08
 --- !u!4 &5694816590443382122
 Transform:

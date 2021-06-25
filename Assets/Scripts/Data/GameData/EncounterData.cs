@@ -24,13 +24,13 @@ public class EncounterData
         foreach(XElement stageXML in encounterXML.Element("Stages").Elements("Stage"))
         {
             stageData = new EncounterStageData(stageXML);
-            _stageMap.Add(stageData.Name, stageData);
+            _stageMap.Add(stageData.Identifier, stageData);
         }
     }
 
-    public EncounterStageData GetStageData(string inStageName)
+    public EncounterStageData GetStageData(string inStageIdentifier)
     {
-        return _stageMap.ContainsKey(inStageName) ? _stageMap[inStageName] : null;
+        return _stageMap.ContainsKey(inStageIdentifier) ? _stageMap[inStageIdentifier] : null;
     }
 }
 

@@ -7,6 +7,7 @@ public class GameDataManager : Singleton<GameDataManager>
 {
     private Dictionary<string, StatData> _statMap = new Dictionary<string, StatData>();
     private Dictionary<string, EncounterData> _encounterMap = new Dictionary<string, EncounterData>();
+
     
 
     public void LoadData(string configPath)

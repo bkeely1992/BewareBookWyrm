@@ -6,11 +6,13 @@ using UnityEngine.UI;
 
 public class EncounterManager : MonoBehaviour
 {
-    public enum EncounterState
+    public enum EncounterTransition
     {
-        choose_move, perform_move
+        skill_check,
+        new_moves,
+        encounter_end,
+        invalid
     }
-    private EncounterState _state = EncounterState.choose_move;
 
     public Text stageDescriptionText;
     public List<EncounterMove> availableMoves = new List<EncounterMove>();
@@ -39,7 +41,6 @@ public class EncounterManager : MonoBehaviour
 
     public void SetEncounter(string inEncounterName)
     {
-        _state = EncounterState.choose_move;
         _currentEncounter = GameDataManager.Instance.GetEncounterData(inEncounterName);
 
         if(_currentEncounter == null)
@@ -52,82 +53,54 @@ public class EncounterManager : MonoBehaviour
         //Load the first stage
         LoadStage(_currentEncounter.StartingStage);
 
-        //Add listener for the typing method
-        TypeManager.OnTyped += CheckForMatch;
-    }
-
-    public void CheckForMatch()
-    {
-        switch (_state)
-        {
-            case EncounterState.choose_move:
-                CheckForChooseMoveMatch();
-                break;
-            case EncounterState.perform_move:
-                CheckForPerformMoveMatch();
-
-                break;
-        }
-
         
     }
 
-    private void CheckForChooseMoveMatch()
-    {
-        foreach (EncounterMove availableMove in availableMoves)
-        {
-            if (TypeManager.Instance.WrittenInput == availableMove.moveData.Name)
-            {
-                chooseMoveGroupObject.SetActive(false);
-                performMoveGroupObject.SetActive(true);
-                TypeManager.Instance.ClearText();
+    //public void CheckForMatch()
+    //{
+    //    switch (_state)
+    //    {
+    //        case EncounterState.choose_move:
+    //            CheckForChooseMoveMatch();
+    //            break;
+    //        case EncounterState.perform_move:
+    //            CheckForPerformMoveMatch();
 
-                //Load the move contents
-                _activeMove = availableMove.moveData;
-                for (int i = 0; i < _activeMove.MoveComponents.Count; i++)
-                {
-                    moveComponents[i].componentData = _activeMove.MoveComponents[i];
-                    moveComponents[i].moveText.text = _activeMove.MoveComponents[i].Text;
-                    moveComponents[i].moveText.color = Color.black;
-                }
-                moveComponents[0].moveText.color = Color.white;
-                _state = EncounterState.perform_move;
-                _activeComponentIndex = 0;
-            }
-        }
-    }
+    //            break;
+    //    }
+    //}
 
-    private void CheckForPerformMoveMatch()
-    {
-        if (TypeManager.Instance.WrittenInput == moveComponents[_activeComponentIndex].componentData.Text)
-        {
-            moveComponents[_activeComponentIndex].moveText.color = Color.black;
-            _activeComponentIndex++;
-            if(_activeComponentIndex >= moveComponents.Count)
-            {
-                //Switch back to choose move
-                _state = EncounterState.choose_move;
-                performMoveGroupObject.SetActive(false);
-                chooseMoveGroupObject.SetActive(true);
-                TypeManager.Instance.ClearText();
+    //private void CheckForPerformMoveMatch()
+    //{
+    //    if (TypeManager.Instance.WrittenInput == moveComponents[_activeComponentIndex].componentData.Text)
+    //    {
+    //        moveComponents[_activeComponentIndex].moveText.color = Color.black;
+    //        _activeComponentIndex++;
+    //        if(_activeComponentIndex >= moveComponents.Count)
+    //        {
+    //            //Switch back to choose move
+    //            _state = EncounterState.choose_move;
+    //            performMoveGroupObject.SetActive(false);
+    //            chooseMoveGroupObject.SetActive(true);
+    //            TypeManager.Instance.ClearText();
 
-                //Load the next interaction
-            }
-            else
-            {
-                moveComponents[_activeComponentIndex].moveText.color = Color.white;
-                TypeManager.Instance.ClearText();
-            }
-        }
+    //            //Load the next interaction
+    //        }
+    //        else
+    //        {
+    //            moveComponents[_activeComponentIndex].moveText.color = Color.white;
+    //            TypeManager.Instance.ClearText();
+    //        }
+    //    }
         
-    }
+    //}
 
-    private void LoadStage(string stageName)
+    private void LoadStage(string stageIdentifier)
     {
-        _currentStage = _currentEncounter.GetStageData(stageName);
+        _currentStage = _currentEncounter.GetStageData(stageIdentifier);
         if (_currentStage == null)
         {
-            Debug.LogError("Could not load stage[" + stageName + "], missing from data.");
+            Debug.LogError("Could not load stage[" + stageIdentifier + "], missing from data.");
             gameObject.SetActive(false);
             return;
         }
@@ -141,19 +114,66 @@ public class EncounterManager : MonoBehaviour
         }
         availableMoves.Clear();
 
+        if(_currentStage is ChooseMoveStageData)
+        {
+            LoadChooseMoveStage((ChooseMoveStageData)_currentStage);
+        }
+        else if(_currentStage is SkillCheckStageData)
+        {
+            LoadSkillCheckStage((SkillCheckStageData)_currentStage);
+        }
+    }
+
+    private void LoadChooseMoveStage(ChooseMoveStageData stageData)
+    {
         //Set the moves
         GameObject availableMoveObject;
         EncounterMove currentEncounterMove;
-        Color moveColour;
         foreach (MoveData moveData in _currentStage.AvailableMoves)
         {
             availableMoveObject = Instantiate(availableMovePrefab, availableMoveParent);
             currentEncounterMove = availableMoveObject.GetComponent<EncounterMove>();
-            currentEncounterMove.moveText.text = moveData.Name;
-            moveColour = GameDataManager.Instance.GetStatData(moveData.StatName).Colour;
-            currentEncounterMove.moveText.color = moveColour;
-            currentEncounterMove.moveData = moveData;
-            availableMoves.Add(currentEncounterMove);
+
+            if (currentEncounterMove)
+            {
+                currentEncounterMove.SetMoveData(moveData);
+                availableMoves.Add(currentEncounterMove);
+            }
+            else
+            {
+                Debug.LogError("Encounter move could not be found. Could not set its corresponding move data.");
+            }
+        }
+    }
+
+    private void LoadSkillCheckStage(SkillCheckStageData stageData)
+    {
+
+    }
+
+    public void ChooseMove(string inIdentifier)
+    {
+        EncounterMove matchingEncounterMove = availableMoves.Single(m => m.Identifier == inIdentifier);
+        if(matchingEncounterMove != null)
+        {
+            chooseMoveGroupObject.SetActive(false);
+            performMoveGroupObject.SetActive(true);
+
+            //Load the move contents
+            if (matchingEncounterMove.moveData.IsSkillCheck)
+            {
+                _activeMove = matchingEncounterMove.moveData;
+                for (int i = 0; i < _activeMove.MoveComponents.Count; i++)
+                {
+                    moveComponents[i].componentData = _activeMove.MoveComponents[i];
+                    moveComponents[i].moveText.text = _activeMove.MoveComponents[i].Text;
+                    moveComponents[i].moveText.color = Color.black;
+                }
+                moveComponents[0].moveText.color = Color.white;
+                _activeComponentIndex = 0;
+            }
+            else if(matchingEncounterMove)
+
         }
     }
 }

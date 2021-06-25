@@ -30,5 +30,4 @@ public class GameFlowManager : Singleton<GameFlowManager>
                 break;
         }
     }
-
 }

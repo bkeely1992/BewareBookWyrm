@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using UnityEngine;
+using static EncounterManager;
 
 public class MoveData
 {
@@ -12,26 +14,30 @@ public class MoveData
 
     public string StatName => _statName;
     private string _statName = "";
-    
-    private string _successStage = "";
-    private string _failStage = "";
 
-    public List<MoveComponentData> MoveComponents => _moveComponents;
-    private List<MoveComponentData> _moveComponents = new List<MoveComponentData>();
+    public string Identifier => _identifier;
+    private string _identifier = "";
+
+    private string _successTransitionIdentifier = "";
+    private string _failTransitionIdentifier = "";
+
+    private EncounterTransition _transition = EncounterTransition.invalid;
 
     public MoveData(XElement moveXML)
     {
         _statName = moveXML.Attribute("stat_name") != null ? moveXML.Attribute("stat_name").Value : "";
         _moveName = moveXML.Attribute("name") != null ? moveXML.Attribute("name").Value : "";
-        _successStage = moveXML.Attribute("success_stage") != null ? moveXML.Attribute("success_stage").Value : "";
-        _failStage = moveXML.Attribute("fail_stage") != null ? moveXML.Attribute("fail_stage").Value : "";
+        _successTransitionIdentifier = moveXML.Attribute("success_transition_identifier") != null ? moveXML.Attribute("success_transition_identifier").Value : "";
+        _failTransitionIdentifier = moveXML.Attribute("fail_transition_identifier") != null ? moveXML.Attribute("fail_transition_identifier").Value : "";
+        _identifier = moveXML.Attribute("identifier") != null ? moveXML.Attribute("identifier").Value : "";
+        _transition = moveXML.Attribute("transition_type") != null && Enum.TryParse<EncounterTransition>(moveXML.Attribute("transition_type").Value, out _transition) ? _transition : EncounterTransition.invalid;
 
-        MoveComponentData currentMoveComponent;
-        foreach(XElement componentXML in moveXML.Element("Components").Elements("Component"))
+        if(_transition == EncounterTransition.invalid)
         {
-            currentMoveComponent = new MoveComponentData(componentXML);
-            _moveComponents.Add(currentMoveComponent);
+            Debug.LogError("An invalid transition has been set for move[" + Identifier + "].");
         }
+
+
     }
 }
 

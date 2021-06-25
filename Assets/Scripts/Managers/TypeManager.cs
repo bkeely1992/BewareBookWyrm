@@ -1,26 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class TypeManager : Singleton<TypeManager>
 {
-    public Text wordOutputText = null;
+    public Text playerEntryText = null;
     public float backspaceUpdateThreshold = 0.25f;
 
-    public delegate void TypeAction();
-    public static event TypeAction OnTyped;
+    private List<WordBlock> _activeFreeFormWordBlocks = new List<WordBlock>();
+    private WordBlock _currentFocusedWordBlock = null;
+    private string _currentPlayerEntry = "";
 
-    public string WrittenInput => _writtenInput;
-    private string _writtenInput = "";
+    public enum TypeState
+    {
+        focused, freeform, none
+    }
+    private TypeState _typeState = TypeState.freeform;
     private float _timeSinceLastBackspace = 0f;
 
     private void Start()
     {
-        if(wordOutputText == null)
+        if(playerEntryText == null)
         {
-            wordOutputText = GetComponent<Text>();
-            if(wordOutputText == null)
+            playerEntryText = GetComponent<Text>();
+            if(playerEntryText == null)
             {
                 gameObject.SetActive(false);
                 Debug.LogError("Could not find word output text on object. Disabling object.");
@@ -29,51 +34,99 @@ public class TypeManager : Singleton<TypeManager>
         }
     }
 
-
     private void Update()
     {
-        CheckInput();
+        HandleInput();
     }
 
-    private void CheckInput()
+    private void HandleInput()
     {
-        if (Input.anyKey)
+        if (Input.GetKey(KeyCode.Backspace))
         {
-            string keysPressed = Input.inputString;
+            //May need handling to adjust the speed for deleting characters {might be too fast?}
+            _timeSinceLastBackspace += Time.deltaTime;
 
-            if (Input.GetKey(KeyCode.Backspace) && _writtenInput.Length != 0)
+            if(_timeSinceLastBackspace > backspaceUpdateThreshold)
             {
-                _timeSinceLastBackspace += Time.deltaTime;
-                if(_timeSinceLastBackspace > backspaceUpdateThreshold)
-                {
-                    _writtenInput = _writtenInput.Substring(0, _writtenInput.Length - 1);
-                    wordOutputText.text = _writtenInput;
-                    if(OnTyped != null)
-                    {
-                        OnTyped();
-                    }
-                    
-                    _timeSinceLastBackspace = 0f;
-                }
-                
-            }
-            else if (keysPressed.Length == 1)
-            {
+                _currentPlayerEntry = _currentPlayerEntry.Length > 0 ? _currentPlayerEntry.Substring(0, _currentPlayerEntry.Length - 1) : "";
+                playerEntryText.text = _currentPlayerEntry;
+                HandleTextChange(_currentPlayerEntry);
                 _timeSinceLastBackspace = 0f;
-                _writtenInput += keysPressed;
-                wordOutputText.text = _writtenInput;
-                if(OnTyped != null)
-                {
-                    OnTyped();
-                }
-                
             }
+        }
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            CheckForCompletedBlock();
+            _timeSinceLastBackspace = 0f;
+        }
+        else
+        {
+            string input = Input.inputString;
+            if (input != "")
+            {
+                _currentPlayerEntry = _currentPlayerEntry + input[0];
+                playerEntryText.text = _currentPlayerEntry;
+                HandleTextChange(_currentPlayerEntry);
+            }
+            _timeSinceLastBackspace = 0f;
         }
     }
 
-    public void ClearText()
+    private void HandleTextChange(string text)
     {
-        _writtenInput = "";
-        wordOutputText.text = _writtenInput;
+        switch (_typeState)
+        {
+            case TypeState.freeform:
+                foreach(WordBlock wordBlock in _activeFreeFormWordBlocks)
+                {
+                    wordBlock.HandleProgress(text);
+                }
+                break;
+            case TypeState.focused:
+                if(_currentFocusedWordBlock != null)
+                {
+                    _currentFocusedWordBlock.HandleProgress(text);
+                }
+                break;
+        }
+    }
+
+    private void CheckForCompletedBlock()
+    {
+        switch (_typeState)
+        {
+            case TypeState.freeform:
+                foreach (WordBlock wordBlock in _activeFreeFormWordBlocks)
+                {
+                    if (wordBlock.Complete)
+                    {
+                        wordBlock?.onAction.Invoke();
+                        return;
+                    }
+                }
+                break;
+            case TypeState.focused:
+                //Do not need to keep track of enter on focused typing mode.
+                break;
+        }
+    }
+
+    public void ClearFreeFormWordBlocks()
+    {
+        foreach(WordBlock wordBlock in _activeFreeFormWordBlocks)
+        {
+            wordBlock.onRemove?.Invoke();
+        }
+        _activeFreeFormWordBlocks.Clear();
+    }
+
+    public void AddFreeFormWordBlock(WordBlock inBlock)
+    {
+        if (_activeFreeFormWordBlocks.Contains(inBlock))
+        {
+            Debug.LogError("Word block[" + inBlock.Identifier + "] has already been added to active free form bank. Skipping add.");
+            return;
+        }
+        _activeFreeFormWordBlocks.Add(inBlock);
     }
 }
