@@ -9,23 +9,26 @@ public class EncounterManager : MonoBehaviour
     public enum EncounterTransition
     {
         skill_check,
-        new_moves,
+        new_interactions,
         encounter_end,
         invalid
     }
 
     public Text stageDescriptionText;
-    public List<EncounterMove> availableMoves = new List<EncounterMove>();
+    public List<EncounterInteraction> availableMoves = new List<EncounterInteraction>();
     public GameObject availableMovePrefab, chooseMoveGroupObject;
     public Transform availableMoveParent;
 
     public GameObject performMoveGroupObject;
-    public List<MoveComponent> moveComponents = new List<MoveComponent>();
+    public List<SkillCheckComponent> skillCheckComponents = new List<SkillCheckComponent>();
 
     private EncounterData _currentEncounter = null;
     private EncounterStageData _currentStage = null;
-    private MoveData _activeMove = null;
+    private InteractionData _activeInteraction = null;
     private int _activeComponentIndex = 0;
+
+    private Dictionary<string, SkillCheckStageData> _transitionSkillChecks = new Dictionary<string, SkillCheckStageData>();
+    private Dictionary<string, InteractionStageData> _transitionInteractions = new Dictionary<string, InteractionStageData>();
 
     // Start is called before the first frame update
     void Start()
@@ -56,45 +59,6 @@ public class EncounterManager : MonoBehaviour
         
     }
 
-    //public void CheckForMatch()
-    //{
-    //    switch (_state)
-    //    {
-    //        case EncounterState.choose_move:
-    //            CheckForChooseMoveMatch();
-    //            break;
-    //        case EncounterState.perform_move:
-    //            CheckForPerformMoveMatch();
-
-    //            break;
-    //    }
-    //}
-
-    //private void CheckForPerformMoveMatch()
-    //{
-    //    if (TypeManager.Instance.WrittenInput == moveComponents[_activeComponentIndex].componentData.Text)
-    //    {
-    //        moveComponents[_activeComponentIndex].moveText.color = Color.black;
-    //        _activeComponentIndex++;
-    //        if(_activeComponentIndex >= moveComponents.Count)
-    //        {
-    //            //Switch back to choose move
-    //            _state = EncounterState.choose_move;
-    //            performMoveGroupObject.SetActive(false);
-    //            chooseMoveGroupObject.SetActive(true);
-    //            TypeManager.Instance.ClearText();
-
-    //            //Load the next interaction
-    //        }
-    //        else
-    //        {
-    //            moveComponents[_activeComponentIndex].moveText.color = Color.white;
-    //            TypeManager.Instance.ClearText();
-    //        }
-    //    }
-        
-    //}
-
     private void LoadStage(string stageIdentifier)
     {
         _currentStage = _currentEncounter.GetStageData(stageIdentifier);
@@ -105,18 +69,15 @@ public class EncounterManager : MonoBehaviour
             return;
         }
 
-        //Set the stage text
-        stageDescriptionText.text = _currentStage.Description;
-
-        foreach (EncounterMove availableMove in availableMoves)
+        foreach (EncounterInteraction availableMove in availableMoves)
         {
             Destroy(availableMove.gameObject);
         }
         availableMoves.Clear();
 
-        if(_currentStage is ChooseMoveStageData)
+        if(_currentStage is InteractionStageData)
         {
-            LoadChooseMoveStage((ChooseMoveStageData)_currentStage);
+            LoadInteractionStage((InteractionStageData)_currentStage);
         }
         else if(_currentStage is SkillCheckStageData)
         {
@@ -124,56 +85,92 @@ public class EncounterManager : MonoBehaviour
         }
     }
 
-    private void LoadChooseMoveStage(ChooseMoveStageData stageData)
+    private void LoadInteractionStage(InteractionStageData stageData)
     {
+        //Set the stage text
+        stageDescriptionText.text = stageData.Description;
+
         //Set the moves
         GameObject availableMoveObject;
-        EncounterMove currentEncounterMove;
-        foreach (MoveData moveData in _currentStage.AvailableMoves)
+        EncounterInteraction currentEncounterMove;
+        foreach (InteractionData interactionData in stageData.AvailableInteractions)
         {
             availableMoveObject = Instantiate(availableMovePrefab, availableMoveParent);
-            currentEncounterMove = availableMoveObject.GetComponent<EncounterMove>();
+            currentEncounterMove = availableMoveObject.GetComponent<EncounterInteraction>();
 
             if (currentEncounterMove)
             {
-                currentEncounterMove.SetMoveData(moveData);
+                currentEncounterMove.SetInteractionData(interactionData);
                 availableMoves.Add(currentEncounterMove);
             }
             else
             {
-                Debug.LogError("Encounter move could not be found. Could not set its corresponding move data.");
+                Debug.LogError("Encounter move could not be found. Could not set its corresponding data.");
             }
         }
     }
 
     private void LoadSkillCheckStage(SkillCheckStageData stageData)
     {
-
+        for (int i = 0; i < stageData.SkillCheckComponents.Count; i++)
+        {
+            skillCheckComponents[i].componentData = stageData.SkillCheckComponents[i];
+            skillCheckComponents[i].moveText.text = stageData.SkillCheckComponents[i].Text;
+            skillCheckComponents[i].moveText.color = Color.black;
+        }
+        skillCheckComponents[0].moveText.color = Color.white;
+        _activeComponentIndex = 0;
     }
 
-    public void ChooseMove(string inIdentifier)
+    public void ChooseInteraction(string inIdentifier)
     {
-        EncounterMove matchingEncounterMove = availableMoves.Single(m => m.Identifier == inIdentifier);
+        EncounterInteraction matchingEncounterMove = availableMoves.Single(m => m.Identifier == inIdentifier);
         if(matchingEncounterMove != null)
         {
             chooseMoveGroupObject.SetActive(false);
             performMoveGroupObject.SetActive(true);
+            _activeInteraction = matchingEncounterMove.interactionData;
 
             //Load the move contents
-            if (matchingEncounterMove.moveData.IsSkillCheck)
+            switch (_activeInteraction.TransitionType)
             {
-                _activeMove = matchingEncounterMove.moveData;
-                for (int i = 0; i < _activeMove.MoveComponents.Count; i++)
-                {
-                    moveComponents[i].componentData = _activeMove.MoveComponents[i];
-                    moveComponents[i].moveText.text = _activeMove.MoveComponents[i].Text;
-                    moveComponents[i].moveText.color = Color.black;
-                }
-                moveComponents[0].moveText.color = Color.white;
-                _activeComponentIndex = 0;
-            }
-            else if(matchingEncounterMove)
+                case EncounterTransition.new_interactions:
+                    InteractionStageData transitionInteraction = _transitionInteractions.ContainsKey(_activeInteraction.TransitionIdentifier) ? _transitionInteractions[_activeInteraction.TransitionIdentifier] : null;
 
+                    if(transitionInteraction != null)
+                    {
+                        LoadInteractionStage(transitionInteraction);
+                    }
+                    else
+                    {
+                        //Error
+                        Debug.LogError("Interaction transition[" + _activeInteraction.TransitionIdentifier + "] for move[" + _activeInteraction.Identifier + "] is not active in the data. Cannot transition from current interaction.");
+                        return;
+                    }
+
+                    break;
+                case EncounterTransition.skill_check:
+
+                    SkillCheckStageData transitionSkillCheck = _transitionSkillChecks.ContainsKey(_activeInteraction.TransitionIdentifier) ? _transitionSkillChecks[_activeInteraction.TransitionIdentifier] : null;
+
+                    if(transitionSkillCheck != null)
+                    {
+                        LoadSkillCheckStage(transitionSkillCheck);
+                    }
+                    else
+                    {
+                        //Error
+                        Debug.LogError("Skill check transition[" + _activeInteraction.TransitionIdentifier + "] for move[" + _activeInteraction.Identifier + "] is not active in the data. Cannot transition from current interaction.");
+                        return;
+                    }
+
+
+                    break;
+                case EncounterTransition.encounter_end:
+                    //Return to the map
+                    Debug.Log("Return to the map.");
+                    break;
+            }
         }
     }
 }

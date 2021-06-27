@@ -6,82 +6,251 @@
 <Stat name="willpower">
 <Colour r="0.1864" g="0.5283" b="0.0174"/>
 </Stat>
+<Stat name="chitchat">
+<Colour r="0.1864" g="0.5283" b="0.5283"/>
+</Stat>
 <Stat name="shifty">
 <Colour r="0.382" g="0.4797" b="1"/>
 </Stat>
 <Stat name="witching">
 <Colour r="0.0156" g="0.4048" b="0.5294"/>
 </Stat>
+<Stat name="none">
+<Colour r="1" g="1" b="1"/>
+</Stat>
 </Stats>
-<Scenes>
-<Scene>
-
-</Scene>
-</Scenes>
 <Encounters>
-<Encounter name="encounter_01">
+<Encounter name="e01-cake">
 <Stages>
-<Stage>
-<Description>
-Glabbor notices you examining the cake and rushes over with a sneer on their face, "that cake is for guests only."
-</Description>
-<AvailableMoves>
-<AvailableMove name="punch the cake" stat_name="brawn" base_time="20">
+<InteractionStages>
+<InteractionStage identifier="e01-cake_greeting-0">
+<Description>Glabbor notices you examining the cake and rushes over with a sneer on their face, "that cake is for guests only."</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-admission-0"/>
+<AvailableInteraction identifier="e01-cake_i-punch-0"/>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_admission-0">
+<Description>You flash your admission ticket. Glabbor rolls their eyes, "I don't have time for this. Don't touch anything or cause me any problems, I have a party to run." They storm off before you can respond.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-punch-0"/>
+<AvailableInteraction identifier="e01-cake_i-invisible-0"/>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_missed-punch-0">
+<Description>You gauge the distance to the cake entirely wrong. Swinging at the air, you fall to the ground. By the time you're back on your feet, you're being escorted to the door by the guard.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_hurt-hand-0">
+<Description>You arc your hand down towards the cake and only now notice that you're aiming directly at a large candle. You yelp in pain and tend to your burnt hand as Glabbor has you escorted off the premises.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_pissed-guest-0">
+<Description>The cake goes flying everywhere, but a considerable portion lands all over a huge hulking knight. They tower over you and look ready to through a punch.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_s-calm-down-0"/>
+<AvailableInteraction identifier="e01-cake_s-sucker-punch-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_caked-glabbor-0">
+<Description>The majority of the cake splatters over Glabbor. Nearby snickers can be heard from the other guests. Glabbor has the guards take you out, one of them gives you a sympathetic high five of approval.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_wasted-time-0">
+<Description>You look around for a good spot for far longer than you would hope to and eventually have to give up.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_concerned-guests-0">
+<Description>You underestimate just how loud your magical murmurs are, as you've drawn the attention of party guests who seem rather uneasy about your incantations. One of them informs Glabbor and you're quickly shown the door.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_bumped-into-0">
+<Description>Someone unaware of your presence knocks you off balance and you hit your head on a table. When you come to, the spell has worn off and you were dragged outside, the patrons having assumed you were passed out drunk.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_calmed-down-0">
+<Description>They begin to simmer down, realizing from your thoughtful words that you had meant no harm. Glabbor is less receptive to argument, however, and has you thrown out of their party.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_pissed-guest-1">
+<Description>The knight is completely uninterested in what you have to say and puts you in a chokehold.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_s-sucker-punch-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_pissed-guest-2">
+<Description>You take a hit to the face. Not exactly your favourite thing to do.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_s-sucker-punch-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-cake_pissed-guest-3">
+<Description>The knight keels over in pain. The guard draws their weapon and many of the guests look afraid of you. Perhaps it's time to leave.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-invisible-0">
+<Description>You're now invisible at the party. What do you do?</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_s-look-around-0"/>
+<AvailableInteraction identifier="e01-cake_s-steal-glabbor-wallet-0"/>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-looked-around-0">
+<Description>You find some valuables on the ground. It pays to be curious sometimes!</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-wasted-time-1">
+<Description>You find it difficult to focus with all of the commotion of the party. Nothing of value was found and it was just generally a big waste of time.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-steal-glabbor-wallet-1">
+<Description>You reach for the wallet and accidentally brush against Glabbor's side. Their eyes widen and they swing around wildly, catching you in the face. Your nose starts bleeding and have to leave the party to quell it.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+<InteractionStage identifier="e01-steal-glabbor-wallet-2">
+<Description>You rifle through Glabbor's wallet, finding some money and a book.</Description>
+<AvailableInteractions>
+<AvailableInteraction identifier="e01-cake_i-leave-0"/>
+</AvailableInteractions>
+</InteractionStage>
+</InteractionStages>
+s-steal-glabbor-wallet-0
+<SkillCheckStages>
+<SkillCheckStage identifier="e01-cake_s-punch-0" base_time="45" success_transition_identifier="e01-cake_caked-glabbor-0">
 <Components>
-<Component base_damage="2">
-You pull back your first and then bury it directly into the cake, sending bits of it flying everywhere. 
+<Component fail_transition_identifier="e01-cake_missed-punch-0">
+You pull back your first and then swing directly at the cake.
 </Component>
-<Component base_damage="1">
-Nearby patrons are covered from head to toe. 
+<Component fail_transition_identifier="e01-cake_hurt-hand-0">
+Your hand buries into the cake, sending bits flying everywhere.
 </Component>
-<Component base_damage="1" reputation="-5">
-Some seem more pleased by this than others.
+<Component fail_transition_identifier="e01-cake_pissed-guest-0">
+Most of the debris lands on Glabbor, making them turn bright red with anger.
 </Component>
 </Components>
-</AvailableMove>
-<AvailableMove name="insult the cake" stat_name="willpower" base_time="35">
+</SkillCheckStage>
+<SkillCheckStage identifier="e01-cake_s-invisible-0" base_time="20" success_transition_identifier="e01-cake_invisible-0">
 <Components>
-<Component self_damage="2">
-You flash a mean smile back at Glabbor who seems taken off their guard.
+<Component fail_transition_identifier="e01-cake_wasted-time-0">
+You find somewhere discrete to begin your spell.
 </Component>
-<Component armour="1">
-"That's alright, I have an aversion to poorly made cakes. It's too bad that you couldn't afford a better one."
+<Component fail_transition_identifier="e01-cake_concerned-guests-0">
+You mutter some words of power.
 </Component>
-<Component base_damage="7">
-Glabbor is stunned by this remark and is at a loss for words. They are not used to you being willing to stick up for yourself.
+<Component fail_transition_identifier="e01-cake_bumped-into-0">
+Just like that, you begin to fade away, completely invisible to the other guests.
 </Component>
 </Components>
-</AvailableMove>
-<AvailableMove name="steal glabbor's wallet" stat_name="shifty" base_time="5">
+</SkillCheckStage>
+<SkillCheckStage identifier="e01-cake_s-calm-down-0" base_time="60" success_transition_identifier="e01-cake_calmed-down-0">
 <Components>
-<Component self_damage="2">
-You snicker at Glabbor's remark, "haha that's a good one! Very funny stuff."
+<Component fail_transition_identifier="e01-cake_pissed-guest-1">
+You look directly into the eyes of the furious knight.
 </Component>
-<Component armour="1">
-Glabbor raises an eyebrow and then turns away, seemingly bored with your reaction.
+<Component fail_transition_identifier="e01-cake_pissed-guest-1">
+You gesture towards the cake and tell them that you were merely trying to kill a fly.
 </Component>
-<Component gold="25" base_damage="5">
-They become too engrossed in their conversation to notice when you grab their coinpurse from out of their pocket.
+<Component fail_transition_identifier="e01-cake_pissed-guest-1">
+Your words reach into the depths of their soul and make them feel a sense of connection that they have not felt since they were a child.
 </Component>
 </Components>
-</AvailableMove>
-<AvailableMove name="turn invisible" stat_name="witching" base_time="25">
+</SkillCheckStage>
+<SkillCheckStage identifier="e01-cake_s-look-around-0" base_time="20" success_transition_identifier="e01-cake_looked-around-0">
 <Components>
-<Component mana="-2">
-You begin to mutter some words of power. "Yiglasario.. Windeckly.." 
+<Component fail_transition_identifier="e01-cake_bumped-into-0">
+You meander your way around the party, looking for anything of value.
 </Component>
-<Component reputation="-1">
-People seem really unnerved by this.
+<Component fail_transition_identifier="e01-cake_bumped-into-0">
+Darting between people as they move around and talk with one another, something on the ground catches your eye.
 </Component>
-<Component dodge="3">
-There is a gasp when suddenly you begin to turn transluscent before completely disappearing!
+<Component fail_transition_identifier="e01-cake_bumped-into-0">
+A coinpurse has been spilled on the ground at the other end of the party. You race over to grab it before someone notices.
 </Component>
 </Components>
-</AvailableMove>
-
-</AvailableMoves>
-</Stage>
+</SkillCheckStage>
+<SkillCheckStage identifier="e01-cake_s-sucker-punch-0" base_time="20" success_transition_identifier="e01-cake_pissed-guest-3">
+<Components>
+<Component fail_transition_identifier="e01-cake_pissed-guest-2">
+The knight prepares a hefty punch and you prepare yourself.
+</Component>
+<Component fail_transition_identifier="e01-cake_pissed-guest-2">
+Your raise your arms to shield yourself against the blow.
+</Component>
+<Component fail_transition_identifier="e01-cake_pissed-guest-2">
+Your stance absorbs the force of the knight's attack, giving you room to hit them unexpectedly.
+</Component>
+</Components>
+</SkillCheckStage>
+<SkillCheckStage identifier="e01-cake_s-steal-glabbor-wallet-0" base_time="15" success_transition_identifier="e01-cake_steal-glabbor-wallet-2">
+<Components>
+<Component fail_transition_identifier="e01-cake_steal-glabbor-wallet-1">
+You take a deep breath, and prepare yourself.
+</Component>
+<Component fail_transition_identifier="e01-cake_steal-glabbor-wallet-1">
+Everything slows down to a crawl, you can see everything as it happens all around you.
+</Component>
+<Component fail_transition_identifier="e01-cake_steal-glabbor-wallet-1">
+Your hand reaches out and takes hold of the coinpurse.
+</Component>
+</Components>
+</SkillCheckStage>
+</SkillCheckStages>
 </Stages>
+<Interactions>
+<Interaction 
+identifier="e01-cake_i-admission-0"
+name="say hello"
+stat_name="none"
+transition_identifier="e01-cake_admission-0"
+transition_type="new_interactions"
+/>
+<Interaction 
+identifier="e01-cake_i-invisible-0"
+name="turn invisible"
+stat_name="witching"
+transition_identifier="e01-cake_invisible-0"
+transition_type="skill_check"
+/>
+<Interaction 
+identifier="e01-cake_i-punch-0"
+name="punch the cake"
+stat_name="brawn"
+transition_identifier="e01-cake_punch-0"
+transition_type="skill_check"
+/>
+<Interaction 
+identifier="e01-cake_i-leave-0"
+name="leave"
+stat_name="none"
+transition_identifier=""
+transition_type="session_end"
+/>
+</Interactions>
 </Encounter>
 </Encounters>
 <Dialogs>

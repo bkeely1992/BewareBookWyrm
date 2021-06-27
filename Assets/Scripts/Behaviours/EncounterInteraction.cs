@@ -3,34 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EncounterMove : MonoBehaviour
+public class EncounterInteraction : MonoBehaviour
 {
     public string Identifier = "";
     public Text moveText;
-    public MoveData moveData;
+    public InteractionData interactionData;
     public WordBlock wordBlock = null;
 
-    public void SetMoveData(MoveData inMoveData)
+    public void SetInteractionData(InteractionData inInteractionData)
     {
         if (wordBlock != null)
         {
             //This encounter has an existing word block that must be removed.
         }
 
-        moveData = inMoveData;
+        interactionData = inInteractionData;
 
         if (!moveText)
         {
-            Debug.LogError("Text object has not been set for encounter move. Cannot assign word block.");
+            Debug.LogError("Text object has not been set for encounter interaction. Cannot assign word block.");
             return;
         }
 
-        Color moveColour = GameDataManager.Instance.GetStatData(moveData.StatName).Colour;
-        Color highlightColour = GameDataManager.Instance.GetStatData(moveData.StatName).Highlight;
-        moveText.text = moveData.Name;
+        Color moveColour = GameDataManager.Instance.GetStatData(interactionData.StatName).Colour;
+        Color highlightColour = GameDataManager.Instance.GetStatData(interactionData.StatName).Highlight;
+        moveText.text = interactionData.Name;
         moveText.color = moveColour;
 
-        wordBlock = new WordBlock(moveData.Identifier, moveText, moveData.Name, highlightColour);
+        wordBlock = new WordBlock(interactionData.Identifier, moveText, interactionData.Name, highlightColour);
 
         //Need to set the listeners
         wordBlock.onMatch += wordBlock.HighlightProgress;
@@ -43,7 +43,7 @@ public class EncounterMove : MonoBehaviour
 
     public void ChooseMove()
     {
-        GameFlowManager.Instance.encounterManager.ChooseMove(Identifier);
+        GameFlowManager.Instance.encounterManager.ChooseInteraction(Identifier);
     }
 
     private void RemoveWordBlock()

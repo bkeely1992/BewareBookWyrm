@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MoveComponent : MonoBehaviour
+public class SkillCheckComponent : MonoBehaviour
 {
     public Text moveText;
-    public MoveComponentData componentData;
+    public SkillCheckComponentData componentData;
 }
